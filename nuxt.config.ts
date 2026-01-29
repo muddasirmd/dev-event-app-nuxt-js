@@ -4,5 +4,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss'
+  ],
+  css: [
+    '~/assets/css/global.css' // path to your global CSS
   ]
 })
