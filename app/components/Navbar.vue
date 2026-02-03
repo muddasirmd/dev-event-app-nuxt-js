@@ -1,8 +1,8 @@
 <template>
     <header>
         <nav>
-            <NuxtLink href='/' className="logo">
-                <NuxtImg src="/icons/logo.png" alt="logo" width={24} height={24} />
+            <NuxtLink href='/' class="logo">
+                <NuxtImg src="/icons/logo.png" alt="logo" width="24" height="24" />
 
                 <p>DevEvent</p>
             </NuxtLink>
