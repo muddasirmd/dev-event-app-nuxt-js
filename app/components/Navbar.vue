@@ -5,6 +5,7 @@
                 <NuxtImg src="/icons/logo.png" alt="logo" width="24" height="24" />
 
                 <p>DevEvent</p>
+                
             </NuxtLink>
 
             <ul>
