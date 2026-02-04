@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxt/image": "^2.0.0",
     "@tailwindcss/vite": "^4.1.18",
+    "mongoose": "^9.1.5",
     "nuxt": "^4.3.0",
     "ogl": "^1.0.11",
     "tailwindcss": "^4.1.18",
