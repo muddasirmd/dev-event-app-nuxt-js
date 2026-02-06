@@ -17,6 +17,13 @@
 
 <script setup>
 
+const config = useRuntimeConfig()
+
+const BASE_URL = config.public.baseUrl;
+
+const response = await useFetch('/api/events')
+
+
 </script>
 
 <style scoped>
