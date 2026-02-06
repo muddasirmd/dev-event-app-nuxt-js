@@ -15,4 +15,13 @@ export default defineNuxtConfig({
   },
 
   modules: ['@nuxt/image'],
+
+  runtimeConfig: {
+    // Server-only
+    mongodbUri: process.env.MONGODB_URI,
+
+    public: {
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL
+    }
+  }
 })

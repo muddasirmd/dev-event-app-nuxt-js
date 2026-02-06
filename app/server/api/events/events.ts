@@ -1,78 +1,95 @@
-import { v2 as cloudinary } from 'cloudinary';
-import connectDB from "@/server/utils/mongodb";
-import Event from "~/server/database/event.model";
+import { v2 as cloudinary } from 'cloudinary'
+import connectDB from '~/server/utils/mongodb'
+import Event from '~/server/database/event.model'
+import { readMultipartFormData } from 'h3'
 
-export async function POST(req: NextRequest) {
+export default defineEventHandler(async (event) => {
 
-    try{
-        await connectDB();
+  // =========================
+  // POST → Create Event
+  // =========================
+  if (event.method === 'POST') {
+    try {
+      await connectDB()
 
-        const formaData = await req.formData();
+      const formData = await readMultipartFormData(event)
 
-        let event;
+      if (!formData) {
+        throw createError({ statusCode: 400, statusMessage: 'Form data is required' })
+      }
 
-        try{
-            // Parse Data
-            event = Object.fromEntries(formaData.entries());
-        } catch(e){
-            return NextResponse.json({message: 'Invalid JSON data format'}, {status: 400})
+      // Convert fields to object
+      const data: Record<string, any> = {}
+      let file: any
+
+      for (const item of formData) {
+        if (item.type === 'file' && item.name === 'image') {
+          file = item
+        } else if (item.name && item.data) {
+          data[item.name] = item.data.toString()
         }
+      }
 
-        // Image Upload to Cloudinary
-        const file = formaData.get('image') as File;
+      if (!file) {
+        throw createError({ statusCode: 400, statusMessage: 'Image file is required' })
+      }
 
-        if(!file){
-            return NextResponse.json({message: 'Image file is required'}, {status: 400})
-        }
+      // Parse JSON fields
+      let tags, agenda
+      try {
+        tags = JSON.parse(data.tags)
+        agenda = JSON.parse(data.agenda)
+      } catch {
+        throw createError({ statusCode: 400,statusMessage: 'Invalid JSON format for tags or agenda'})
+      }
 
-        let tags = JSON.parse(formaData.get('tags') as string);
-        let agenda = JSON.parse(formaData.get('agenda') as string)
+      // Upload to Cloudinary
+      const uploadResult = await new Promise<any>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { resource_type: 'image', folder: 'dev-events' },
+          (error, result) => {
+            if (error) reject(error)
+            else resolve(result)
+          }
+        ).end(file.data)
+      })
 
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+      // Save to DB
+      const createdEvent = await Event.create({
+        ...data,
+        tags,
+        agenda,
+        image: uploadResult.secure_url
+      })
 
-        const uploadResult = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream({resource_type: 'image', folder: 'dev-events'}, (error, result) => {
-                if (error) return reject(error);
+      return { message: 'Event created successfully',event: createdEvent }
+    } catch (e) {
+      console.error(e)
 
-                resolve(result);
-            }).end(buffer);
-        });
-        
-        event.image = (uploadResult as {secure_url: string}).secure_url;
-        
-        const createdEvent = await Event.create({
-            ...event,
-            tags: tags,
-            agenda: agenda
-        });
-        
-        return { message: 'Event created successfully', event: createdEvent }
-    } 
-    catch(e){
-        console.log(e);
-
-        throw createError({
-            statusCode: 500,
-            statusMessage: 'Event Creation Failed',
-            data: e instanceof Error ? e.message : 'Unknown'
-        })
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Event Creation Failed',
+        data: e instanceof Error ? e.message : 'Unknown error'
+      })
     }
-}
+  }
 
-export async function GET() {
-    try{
-        await connectDB();
+  // =========================
+  // GET → Fetch Events
+  // =========================
+  if (event.method === 'GET') {
+    try {
+      await connectDB()
 
-        const events = await Event.find().sort({ createdAt: -1 });
+      const events = await Event.find().sort({ createdAt: -1 })
 
-        return { message: 'Events Fetched Successfully', events }
+      return { message: 'Events Fetched Successfully',events }
+    } catch (e) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Event fetching failed',
+        data: e
+      })
     }
-    catch(e) {
-        throw createError({
-            statusCode: 500,
-            statusMessage: 'Event fetching failed',
-            data: e
-        })
-    }
-}
+  }
+})
