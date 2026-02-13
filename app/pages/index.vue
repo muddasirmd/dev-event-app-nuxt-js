@@ -9,19 +9,29 @@
       <h3>Featured Events</h3>
 
       <ul class="events">
+        <template v-if="events && events.length">
+          <li v-for="event in events" :key="event._id" class="list-none">
+            <EventCard v-bind="event" />
+          </li>
+        </template>
         
       </ul>
     </div>
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
+
+interface IEvent {
+  _id: string
+  title: string
+}
 
 const config = useRuntimeConfig()
 
 const BASE_URL = config.public.baseUrl;
 
-const response = await useFetch('/api/events')
+const response = await useFetch<IEvent[]>('/api/events')
 const {events} = response.data.value
 
 console.log('Fetched events:', events)
