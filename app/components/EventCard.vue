@@ -11,7 +11,7 @@
 
         <div class="datetime">
             <div>
-                <NuxtImg src="/icons/calender.svg" alt="date" width="14" height="14" />
+                <NuxtImg src="/icons/calendar.svg" alt="date" width="14" height="14" />
                 <p>{{ date }}</p>
             </div>
             <div>
