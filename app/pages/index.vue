@@ -23,16 +23,35 @@
 <script setup lang="ts">
 
 interface IEvent {
-  _id: string
-  title: string
+  title: string;
+  slug: string;
+  description: string;
+  overview: string;
+  image: string;
+  venue: string;
+  location: string;
+  date: string;
+  time: string;
+  mode: string;
+  audience: string;
+  agenda: string[];
+  organizer: string;
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface EventsResponse {
+  message: string
+  events: IEvent[]
 }
 
 const config = useRuntimeConfig()
 
 const BASE_URL = config.public.baseUrl;
 
-const response = await useFetch<IEvent[]>('/api/events')
-const {events} = response.data.value
+const {data} = await useFetch<EventsResponse>('/api/events')
+const events = data.value?.events ?? []
 
 console.log('Fetched events:', events)
 
