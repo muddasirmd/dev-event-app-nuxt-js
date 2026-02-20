@@ -48,8 +48,6 @@ interface EventsResponse {
 
 const config = useRuntimeConfig()
 
-const BASE_URL = config.public.baseUrl;
-
 const {data} = await useFetch<EventsResponse>('/api/events')
 const events = data.value?.events ?? []
 
