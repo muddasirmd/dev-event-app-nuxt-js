@@ -51,8 +51,8 @@ try{
 
         if(request.status === 404){
             throw createError({
-                status: 404,
-                statusText: 'Ooops Page Not Found',
+                statusCode: 404,
+                statusMessage: 'Ooops Page Not Found',
                 fatal: true
             })
         }
