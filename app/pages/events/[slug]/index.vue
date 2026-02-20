@@ -17,6 +17,8 @@
 
                 <section class="flex-col-gap-2">
                     <h2>Event Details</h2>
+
+                     <EventDetailItem :icon="'/icons/calendar.svg'" :alt="'calendar'" :label="date" />
                 </section>
 
              </div>
@@ -26,8 +28,40 @@
 
 
 <script setup lang="ts">
-const Child = {
-    props: ['title'],
-    template: `<div> {{ title }} </div>`
+
+const image = ""
+const overview = "Overflow asd"
+const description = "Description asd"
+const date = "2025-01-03"
+
+const route = useRoute()
+const { slug } = route.params
+
+const config = useRuntimeConfig()
+const BASE_URL = config.public.baseUrl;
+
+let event;
+
+try{
+    const request = await fetch(`${BASE_URL}/api/events/${slug}`);
+
+    console.log(request)
+
+    if(!request.ok){
+
+        if(request.status === 404){
+            throw createError({
+                status: 404,
+                statusText: 'Ooops Page Not Found',
+                fatal: true
+            })
+        }
+        throw new Error(`Failed to fetch event: ${request.statusText}`)
+    }
 }
+catch (error){
+    console.log("Error fetching event:", error)
+}
+
+
 </script>
