@@ -4,9 +4,7 @@ import Event from '../database/event.model'
 import { readMultipartFormData } from 'h3'
 
 export default defineEventHandler(async (event) => {
-
-
-  console.log('Received request for /api/events with method:', event.method)
+  
   // =========================
   // POST → Create Event
   // =========================
