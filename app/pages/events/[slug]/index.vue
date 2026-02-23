@@ -45,7 +45,7 @@ let event;
 try{
     const request = await fetch(`${BASE_URL}/api/events/${slug}`);
 
-    console.log(request)
+    // console.log(request)
 
     if(!request.ok){
 
