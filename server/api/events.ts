@@ -64,8 +64,10 @@ export default defineEventHandler(async (event) => {
 
       return { message: 'Event created successfully',event: createdEvent }
     } catch (e) {
-      console.error(e)
+      
+      if (isError(e)) throw e
 
+      // only wrap unknown errors:
       throw createError({
         statusCode: 500,
         statusMessage: 'Event Creation Failed',
