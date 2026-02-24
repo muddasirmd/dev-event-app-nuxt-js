@@ -27,12 +27,12 @@ export default defineEventHandler(async (event) => {
         if(!eventDetail){
             throw createError({
                 statusCode: 404,
-                statusMessage: `Event with slug '${slug}' not found`
+                statusMessage: `Event with slug '${slug}' not found`,
             })
         }
 
         // Return successful response with events data
-        return { message: 'Event fetched successfully', eventDetail}
+        return { message: 'Event fetched successfully', event: eventDetail}
 
     } catch (e) {
 
