@@ -2,7 +2,11 @@
     <div id="book-event">
         <p v-if="submitted">Thank you for booking your spot!</p>
         <form @submit="handleSubmit">
-
+            <div>
+                <label for="email">Email Address</label>
+                <input type="email" id="email" v-model="email" placeholder="Enter your email address"/>
+            </div>
+            <button type="submit" class="button-submit">Submit</button>
         </form>
     </div>
 </template>
@@ -26,12 +30,19 @@ async function handleSubmit(e){
 
     e.preventDefault();
 
-    // TODO : From Here
-    await fetch(`${BASE_URL}/api/bookings`, {
-        method: 'POST',
-        body: JSON.stringify({ name: 'John' }),
-        headers: { 'Content-Type': 'application/json' }
-        })
+    const response = await fetch(`${BASE_URL}/api/bookings`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        eventId,
+        slug,
+        email
+    })
+    })
+
+    const data = await response.json()
 
     
 }
