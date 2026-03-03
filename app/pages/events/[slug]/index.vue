@@ -43,6 +43,7 @@
                     <p v-if="bookings > 0" class="text-sm">Join {{ bookings }} people who have already booked their sopt!</p>
                     <p v-else class="text-sm">Be the first to book your spot!</p>
                     
+                    <BookEvent :eventId="event._id" :slug="event.slug"/>
                 </div>
 
               </aside>
